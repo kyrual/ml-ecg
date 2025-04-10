@@ -50,6 +50,21 @@ def load_data(pca_components=4, return_pca=True):
     else:
         return X_train_transf, X_test_transf, y_train, y_test, rhythm_le
     
+# def filter_classes(X, y, label_encoder, threshold=100):
+#     y_labels = label_encoder.inverse_transform(y)
+#     label_counts = pd.Series(y_labels).value_counts()
+    
+#     keep_labels = label_counts[label_counts >= threshold].index.tolist()
+
+#     keep_mask = [label in keep_labels for label in y_labels]
+
+#     X_filtered = X[keep_mask]
+#     y_filtered = np.array(y)[keep_mask]
+
+#     y_filtered_encoded = label_encoder.fit_transform(y_filtered)
+
+#     return X_filtered, y_filtered_encoded, label_encoder
+    
 def save_classification_report(y_test, y_pred, label_names=None, filename="filename.csv", output_dir="./src/"):
     report_dict = classification_report(
         y_test, y_pred, 
