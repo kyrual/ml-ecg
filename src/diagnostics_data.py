@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, learning_curve
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import classification_report
@@ -42,7 +43,6 @@ def load_data(pca_components=4, return_pca=True):
         X_train_pca = pca.fit_transform(X_train_transf)
         X_test_pca = pca.transform(X_test_transf)
 
-        print("Explained variance ratio:", pca.explained_variance_ratio_)
         print("Total variance retained:", round(np.sum(pca.explained_variance_ratio_), 4))
 
         return X_train_pca, X_test_pca, y_train, y_test, rhythm_le
@@ -69,3 +69,30 @@ def save_classification_report(y_test, y_pred, label_names=None, filename="filen
     report_df = report_df.rename(columns={'index': 'class'})
 
     report_df.to_csv(f'{output_dir}/{filename}', index=False)
+
+def plt_learning_curve(model, X, y, title="title", scoring='accuracy', cv=5, train_sizes=np.linspace(0.1, 1.0, 10), path=""):
+    train_sizes, train_scores, valid_scores = learning_curve(
+        model,
+        X,
+        y,
+        train_sizes=train_sizes,
+        cv=cv,
+        scoring=scoring,
+        shuffle=True,
+        random_state=0
+    )
+
+    train_mean = np.mean(train_scores, axis=1)
+    valid_mean = np.mean(valid_scores, axis=1)
+
+    train_std = np.std(train_scores, axis=1)
+    valid_std = np.std(valid_scores, axis=1)
+
+    plt.plot(train_sizes, train_mean, 'r-', label='train')
+    plt.plot(train_sizes, valid_mean, 'b-', label='validation')
+    plt.ylim([0, 1])
+    plt.legend()
+    plt.grid()
+
+    plt.savefig(f'./src/{path}')
+    plt.show()
