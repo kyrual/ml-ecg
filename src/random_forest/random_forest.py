@@ -2,10 +2,6 @@ from src.diagnostics_data import load_data, save_classification_report, plt_lear
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report
-    )
 
 X_train, X_test, y_train, y_test, le = load_data(pca_components=4, return_pca=True)
 

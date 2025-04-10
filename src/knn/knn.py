@@ -2,10 +2,6 @@ from src.diagnostics_data import load_data, save_classification_report, plt_lear
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import accuracy_score
 
 # KNN classifier configuration
 n = 7           # 3 neighbors
