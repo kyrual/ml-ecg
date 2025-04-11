@@ -4,15 +4,23 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, learning_curve
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import classification_report
 from sklearn.decomposition import PCA
 
-def load_data(pca_components=4, return_pca=True):
+def load_data(pca_components=4, return_pca=True, filter_classes=False, threshold=100):
     print("Loading original data!")
     df = pd.read_excel("./data/Diagnostics.xlsx")
 
     print("Preprocessing data...")
     df_diagnostics = df.iloc[:, [1, 3, 4, 5, 6, 7, 12]].drop_duplicates()
+
+    if filter_classes:
+        print(f"Filtering classes with fewer than {threshold} samples...")
+        label_counts = df_diagnostics['Rhythm'].value_counts()
+        valid_labels = label_counts[label_counts >= threshold].index
+
+        df_diagnostics = df_diagnostics[df_diagnostics['Rhythm'].isin(valid_labels)]
+    else:
+        print("Keeping original dataset with all classes :)")
 
     rhythm_le = LabelEncoder()
     y = rhythm_le.fit_transform(df_diagnostics['Rhythm'])
@@ -48,66 +56,5 @@ def load_data(pca_components=4, return_pca=True):
         return X_train_pca, X_test_pca, y_train, y_test, rhythm_le
 
     else:
+        print(f"Returning dataset without PCA")
         return X_train_transf, X_test_transf, y_train, y_test, rhythm_le
-    
-# def filter_classes(X, y, label_encoder, threshold=100):
-#     y_labels = label_encoder.inverse_transform(y)
-#     label_counts = pd.Series(y_labels).value_counts()
-    
-#     keep_labels = label_counts[label_counts >= threshold].index.tolist()
-
-#     keep_mask = [label in keep_labels for label in y_labels]
-
-#     X_filtered = X[keep_mask]
-#     y_filtered = np.array(y)[keep_mask]
-
-#     y_filtered_encoded = label_encoder.fit_transform(y_filtered)
-
-#     return X_filtered, y_filtered_encoded, label_encoder
-    
-def save_classification_report(y_test, y_pred, label_names=None, filename="filename.csv", output_dir="./src/"):
-    report_dict = classification_report(
-        y_test, y_pred, 
-        target_names=label_names, 
-        output_dict=True,
-        zero_division=0)
-    report_df = pd.DataFrame(report_dict).transpose().round(2)
-
-    column_order = ['precision', 'recall', 'f1-score', 'support']
-    report_df = report_df[column_order]
-
-    summary_rows = ['accuracy', 'macro avg', 'weighted avg']
-    class_rows = [i for i in report_df.index if i not in summary_rows]
-    report_df = report_df.loc[class_rows + summary_rows]
-
-    report_df = report_df.reset_index()
-    report_df = report_df.rename(columns={'index': 'class'})
-
-    report_df.to_csv(f'{output_dir}/{filename}', index=False)
-
-def plt_learning_curve(model, X, y, title="title", scoring='accuracy', cv=5, train_sizes=np.linspace(0.1, 1.0, 10), path=""):
-    train_sizes, train_scores, valid_scores = learning_curve(
-        model,
-        X,
-        y,
-        train_sizes=train_sizes,
-        cv=cv,
-        scoring=scoring,
-        shuffle=True,
-        random_state=0
-    )
-
-    train_mean = np.mean(train_scores, axis=1)
-    valid_mean = np.mean(valid_scores, axis=1)
-
-    train_std = np.std(train_scores, axis=1)
-    valid_std = np.std(valid_scores, axis=1)
-
-    plt.plot(train_sizes, train_mean, 'r-', label='train')
-    plt.plot(train_sizes, valid_mean, 'b-', label='validation')
-    plt.ylim([0, 1])
-    plt.legend()
-    plt.grid()
-
-    plt.savefig(f'./src/{path}')
-    plt.show()
