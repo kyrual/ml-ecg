@@ -17,6 +17,7 @@ rf = RandomForestClassifier(
     )
 rf.fit(X_train, y_train)
 
+# adding random so that every demo is randomized
 random_seed = random.randint(0, 42)
 np.random.seed(random_seed)
 random.seed(random_seed)
