@@ -17,11 +17,11 @@ rf = RandomForestClassifier(
     )
 rf.fit(X_train, y_train)
 
-# adding random so that every demo is randomized
+# adding random so that every sample selected is randomized
 random_seed = random.randint(0, 42)
 np.random.seed(random_seed)
 random.seed(random_seed)
-print(f"Random Seed: {random_seed}\n")
+print(f"Random Seed: {random_seed}")
 
 sample_classes = ['SB', 'AFIB', 'SA']
 print(f"Selected Classes: {sample_classes}")
@@ -42,10 +42,12 @@ true_labels = le.inverse_transform(y_true)
 pred_labels = le.inverse_transform(y_pred)
 
 for i in range(len(sampled_idxs)):
-    print(f"Class   : {true_labels[i]}")
+    print(f"\nClass   : {true_labels[i]}")
     print(f"Prediction: {pred_labels[i]}")
 
     probs = rf.predict_proba(X_sample)[i]
     print("Prediction Probabilities:")
     for j, prob in enumerate(probs):
         print(f"  {le.classes_[j]:<8}: {prob:.2f}")
+
+        
