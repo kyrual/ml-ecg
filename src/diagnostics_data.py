@@ -47,6 +47,11 @@ def load_data(pca_components=4, return_pca=True, filter_classes=False, threshold
 
     if return_pca:
         print(f"Applying PCA with {pca_components} components")
+
+        scaler = StandardScaler()
+        X_train_transf = scaler.fit_transform(X_train_transf)
+        X_test_transf = scaler.transform(X_test_transf)
+        
         pca = PCA(n_components=pca_components)
         X_train_pca = pca.fit_transform(X_train_transf)
         X_test_pca = pca.transform(X_test_transf)
