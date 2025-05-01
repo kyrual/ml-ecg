@@ -13,6 +13,7 @@ rf = RandomForestClassifier(
     min_samples_split=12,
     min_samples_leaf=8,
     max_features=0.2,
+    # class_weight='balanced',
     random_state=0
     )
 rf.fit(X_train, y_train)
