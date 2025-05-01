@@ -37,15 +37,3 @@ plt_learning_curve(
     train_sizes=np.linspace(0.1, 1.0, 10),
     path="random_forest/rf_learning_curve_v3.png"
 )
-
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred, average='macro')  # or 'weighted'
-f1 = f1_score(y_test, y_pred, average='macro')  # or 'weighted'
-
-print(f"🎯 Accuracy:  {accuracy:.4f}")
-print(f"💡 Precision: {precision:.4f}")
-print(f"🌟 F1-score:  {f1:.4f}")
-
-from sklearn.metrics import balanced_accuracy_score
-balanced_acc = balanced_accuracy_score(y_test, y_pred)
-print(f"⚖️ Balanced Accuracy: {balanced_acc:.4f}")
